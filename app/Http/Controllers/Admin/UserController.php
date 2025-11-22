@@ -68,7 +68,11 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('users'));
+        if ($user->email == 'admin@example.com') { // Sesuaikan email admin utama
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Admin utama tidak boleh diedit.');
+        }
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
@@ -116,19 +120,37 @@ class UserController extends Controller
     /**
      * Menghapus user
      */
-    public function destroy(User $user)
+    public function destroy(User $user) // Asumsi Anda pakai Route Model Binding
     {
-        // Cek keamanan (Tetap sama)
-        if ($user->id == Auth::id()) {
+        $userId = $user->id;
+
+        // --- PENTING: JANGAN HAPUS ADMIN UTAMA ---
+        // (Anda bisa sesuaikan 'arga@example.com' dengan email admin utama Anda)
+        if ($user->email == 'admin@example.com') {
             return redirect()->route('admin.users.index')
-                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
+                ->with('error', 'Admin utama tidak boleh dihapus!');
         }
 
-        // PERUBAHAN: Gunakan DB::table()->where()->delete()
-        DB::table('user')->where('id', $user->id)->delete();
+        // 1. Dapatkan semua ID List yang DIBUAT OLEH user ini
+        $listIds = DB::table('lists')->where('user_id', $userId)->pluck('id');
 
-        // Kembalikan (Tetap sama)
+        // 2. Jika user ini punya list, hapus semua TUGAS di dalam list tersebut
+        if ($listIds->isNotEmpty()) {
+            DB::table('task')->whereIn('lists_id', $listIds)->delete();
+        }
+
+        // 3. Hapus LIST-nya sendiri
+        DB::table('lists')->where('user_id', $userId)->delete();
+
+        // 4. Hapus TUGAS LAIN yang DITUGASKAN ke user ini (di list milik user lain)
+        DB::table('task')->where('assigned_user_id', $userId)->delete();
+
+        // 5. Setelah semua bersih, HAPUS USER-nya
+        DB::table('user')->where('id', $userId)->delete();
+
+        // --- SELESAI PEMBERSIHAN ---
+
         return redirect()->route('admin.users.index')
-            ->with('success', 'User berhasil dihapus.');
+            ->with('success', 'User dan semua data terkait berhasil dihapus.');
     }
 }

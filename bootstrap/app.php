@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware -> alias([
             // 'admin' => '\App\Http\Middleware\CheckAdminRole::class',
             'admin' => '\App\Http\Middleware\AdminMiddleware::class',
+            $middleware->redirectUsersTo('/lists'),
             // 'auth' => \App\Http\Middleware\Authenticate::class,
             // 'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         ]);

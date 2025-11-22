@@ -167,12 +167,11 @@
                 <nav>
                     <ul>
                         <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        {{-- Tampilkan "Kelola User" HANYA jika admin --}}
                         @if (Auth::user()->role == 'admin')
                             <li><a href="{{ route('admin.users.index') }}">Kelola User</a></li>
-                            <li><a href="{{ route('admin.lists.index') }}">Semua List</a></li>
-                        @else
-                            <li><a href="#">List Saya</a></li>
                         @endif
+                        <li><a href="{{ route('lists.index') }}">Semua List</a></li>
                     </ul>
                 </nav>
                 <div class="user-profile">
