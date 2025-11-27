@@ -84,7 +84,7 @@
                             Tugaskan Kepada
                         </label>
                         <select name="assigned_user_id" id="assigned_user_id" class="form-input">
-                            <option value="">-- Pilih User --</option>
+                            <option value="">-- Pilih Nama --</option>
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" {{ old('assigned_user_id') == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }}

@@ -18,28 +18,28 @@
             --bg-card: #ffffff;
             --bg-hover: #f1f5f9;
             --bg-input: #ffffff;
-            
+
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
-            
+
             --accent-primary: #3b82f6;
             --accent-secondary: #6366f1;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-danger: #ef4444;
-            
+
             --border-light: #e2e8f0;
             --border-medium: #cbd5e1;
-            
+
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            
+
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-            
+
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -52,26 +52,26 @@
             --bg-card: #1f2937;
             --bg-hover: #374151;
             --bg-input: #374151;
-            
+
             --text-primary: #f3f4f6;
             --text-secondary: #d1d5db;
             --text-muted: #9ca3af;
-            
+
             --accent-primary: #3b82f6;
             --accent-secondary: #60a5fa;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-danger: #ef4444;
-            
+
             --border-light: #374151;
             --border-medium: #4b5563;
-            
+
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
         }
 
-        /* ===== BASE STYLES ===== */
+        /* ===== BASE STYLING ===== */
         * {
             margin: 0;
             padding: 0;
@@ -262,6 +262,10 @@
             gap: 0.5rem;
         }
 
+        .action-buttons>* {
+            width: 100%;
+        }
+
         .btn {
             padding: 0.75rem 1rem;
             border: none;
@@ -275,6 +279,7 @@
             justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
+            width: 100%;
         }
 
         .btn-primary {
@@ -310,6 +315,10 @@
             background: #dc2626;
             transform: translateY(-1px);
             box-shadow: var(--shadow-md);
+        }
+
+        logout-form {
+            width: 100%;
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -360,16 +369,16 @@
                 transform: translateX(-100%);
                 width: 280px;
             }
-            
+
             .sidebar.active {
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
                 width: 100%;
             }
-            
+
             .mobile-menu-btn {
                 display: block;
                 position: fixed;
@@ -383,26 +392,34 @@
                 padding: 0.75rem;
                 cursor: pointer;
                 box-shadow: var(--shadow-lg);
+                font-size: 1.25rem;
+                /* Tambahan agar icon terlihat jelas */
+                line-height: 1;
+                /* Tambahan agar icon center */
             }
         }
 
         @media (max-width: 768px) {
             .main-content {
                 padding: 1rem;
+                padding-top: 5rem;
+                /* Beri ruang untuk tombol menu fixed */
             }
-            
+
             .content-card {
                 padding: 1.5rem;
             }
-            
+
             .page-title {
                 font-size: 1.5rem;
             }
-            
+
             .content-header {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
+                margin-bottom: 1.5rem;
+                /* Sedikit dikurangi */
             }
         }
 
@@ -410,12 +427,12 @@
             .action-buttons {
                 width: 100%;
             }
-            
+
             .btn {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .sidebar {
                 width: 100%;
                 max-width: 300px;
@@ -466,12 +483,10 @@
 </head>
 
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Buka menu">
         <i class="ph ph-list"></i>
     </button>
 
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="app-container">
@@ -479,7 +494,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="ph ph-check-square"></i>
-                <span>PKL Tasks</span>
+                <span>To-Do List</span>
             </div>
 
             @auth
@@ -487,7 +502,8 @@
                     <div class="nav-title">Navigation</div>
                     <ul class="nav-links">
                         <li>
-                            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard') }}"
+                                class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <i class="ph ph-house"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -495,14 +511,16 @@
                         {{-- Tampilkan "Kelola User" HANYA jika admin --}}
                         @if (Auth::user()->role == 'admin')
                             <li>
-                                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                                     <i class="ph ph-users"></i>
                                     <span>Kelola User</span>
                                 </a>
                             </li>
                         @endif
                         <li>
-                            <a href="{{ route('lists.index') }}" class="{{ request()->routeIs('lists.*') ? 'active' : '' }}">
+                            <a href="{{ route('lists.index') }}"
+                                class="{{ request()->routeIs('lists.*') ? 'active' : '' }}">
                                 <i class="ph ph-list-checks"></i>
                                 <span>Semua List</span>
                             </a>
@@ -522,12 +540,12 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button class="btn btn-outline" id="theme-toggle">
+                        <button class="btn btn-outline" id="theme-toggle" aria-label="Ganti mode tema">
                             <i class="ph" id="theme-icon"></i>
                             <span id="theme-text">Mode Gelap</span>
                         </button>
 
-                        <form class="logout-form" action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                        <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-danger">
                                 <i class="ph ph-sign-out"></i>
@@ -567,7 +585,7 @@
     </div>
 
     <script>
-        (function() {
+        function() {
             // Theme Toggle Functionality
             const themeToggle = document.getElementById('theme-toggle');
             const themeIcon = document.getElementById('theme-icon');
@@ -577,6 +595,8 @@
 
             // Initialize theme
             function initTheme() {
+                if (!themeToggle) return; // Pastikan tombol ada (untuk halaman login/guest)
+
                 if (currentTheme === 'dark') {
                     body.classList.add('dark-mode');
                     themeIcon.className = 'ph ph-sun';
@@ -589,19 +609,21 @@
             }
 
             // Toggle theme
-            themeToggle.addEventListener('click', function() {
-                body.classList.toggle('dark-mode');
-                
-                if (body.classList.contains('dark-mode')) {
-                    localStorage.setItem('theme', 'dark');
-                    themeIcon.className = 'ph ph-sun';
-                    themeText.textContent = 'Mode Terang';
-                } else {
-                    localStorage.setItem('theme', 'light');
-                    themeIcon.className = 'ph ph-moon';
-                    themeText.textContent = 'Mode Gelap';
-                }
-            });
+            if (themeToggle) { // Hanya tambahkan listener jika tombol ada
+                themeToggle.addEventListener('click', function() {
+                    body.classList.toggle('dark-mode');
+
+                    if (body.classList.contains('dark-mode')) {
+                        localStorage.setItem('theme', 'dark');
+                        themeIcon.className = 'ph ph-sun';
+                        themeText.textContent = 'Mode Terang';
+                    } else {
+                        localStorage.setItem('theme', 'light');
+                        themeIcon.className = 'ph ph-moon';
+                        themeText.textContent = 'Mode Gelap';
+                    }
+                });
+            }
 
             // Mobile Menu Functionality
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -613,7 +635,7 @@
                 sidebarOverlay.classList.toggle('active');
             }
 
-            if (mobileMenuBtn) {
+            if (mobileMenuBtn) { // Sekarang tombol ini ada
                 mobileMenuBtn.addEventListener('click', toggleMobileMenu);
                 sidebarOverlay.addEventListener('click', toggleMobileMenu);
             }
@@ -626,7 +648,7 @@
                 const navLinks = document.querySelectorAll('.nav-links a');
                 navLinks.forEach(link => {
                     link.addEventListener('click', () => {
-                        if (window.innerWidth <= 1024) {
+                        if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
                             toggleMobileMenu();
                         }
                     });
@@ -641,7 +663,8 @@
                 }
             });
 
-        })();
+        }();
     </script>
 </body>
+
 </html>
