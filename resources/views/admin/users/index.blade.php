@@ -15,7 +15,7 @@
         <a href="{{ route('admin.users.create') }}" 
            class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center gap-2">
             <i class="ph ph-user-plus text-lg"></i>
-            Tambah User Baru
+            Tambah User
         </a>
     </div>
 

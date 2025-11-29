@@ -575,16 +575,22 @@
             @endguest
         </aside>
 
+        {{-- Konten Utama --}}
         <main class="main-content">
-            <div class="content-header">
-                <h1 class="page-title">@yield('title', 'Dashboard')</h1>
-                <div class="header-actions">
-                    @yield('header-actions')
-                </div>
-            </div>
 
-            <div class="content-card">
-                @yield('content')
+            <div class="content-wrapper" style="width: 100%; max-width: 1400px; margin-left: auto; margin-right: auto;">
+
+                <div class="content-header">
+                    <h1 class="page-title">@yield('title', 'Dashboard')</h1>
+                    <div class="header-actions">
+                        @yield('header-actions')
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    @yield('content')
+                </div>
+
             </div>
         </main>
     </div>
@@ -637,7 +643,7 @@
         function toggleMobileMenu() {
             sidebar.classList.toggle('active');
             sidebarOverlay.classList.toggle('active');
-            
+
             // Update aria label untuk aksesibilitas
             const isOpen = sidebar.classList.contains('active');
             mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
@@ -675,7 +681,7 @@
             }
         });
     </script>
-    
+
     @yield('scripts')
 </body>
 
