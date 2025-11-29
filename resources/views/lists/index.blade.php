@@ -48,7 +48,7 @@
                         <i class="ph ph-eye"></i>
                         Lihat Detail & Tugas
                     </a>
-                    
+
                     <a href="{{ route('lists.edit', $list->id) }}" class="action-btn btn-warning">
                         <i class="ph ph-pencil"></i>
                         Edit
@@ -57,8 +57,8 @@
                     <form action="{{ route('lists.destroy', $list->id) }}" method="POST" class="delete-form">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="action-btn btn-danger" 
-                                onclick="return confirm('Anda yakin ingin menghapus list ini? Ini akan menghapus semua tugas di dalamnya.')">
+                        <button type="submit" class="action-btn btn-danger"
+                            onclick="return confirm('Anda yakin ingin menghapus list ini? Ini akan menghapus semua tugas di dalamnya.')">
                             <i class="ph ph-trash"></i>
                             Hapus
                         </button>
@@ -67,7 +67,7 @@
             </div>
         @endforeach
 
-        @if($lists->isEmpty())
+        @if ($lists->isEmpty())
             <div class="empty-state animate-fade-in">
                 <div class="empty-icon">
                     <i class="ph ph-clipboard-text"></i>
@@ -86,6 +86,13 @@
         /* List Container */
         .lists-container {
             display: grid;
+            /* PERBAIKAN:
+                  Ini akan secara otomatis membuat kolom grid yang responsif.
+                  - 'auto-fit': Buat kolom sebanyak mungkin.
+                  - 'minmax(320px, 1fr)': Setiap kolom memiliki lebar minimal 320px
+                    dan lebar maksimal 1 fraksi (membagi ruang yang tersisa).
+                */
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
@@ -100,6 +107,10 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            /* Menambahkan ini agar tinggi card konsisten di baris yang sama */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .list-card::before {
@@ -160,6 +171,8 @@
             gap: 0.75rem;
             flex-wrap: wrap;
             align-items: center;
+            /* Memastikan tombol selalu di bawah */
+            margin-top: 1rem;
         }
 
         .action-btn {
@@ -221,6 +234,8 @@
             background: var(--bg-card);
             border-radius: var(--radius-lg);
             border: 2px dashed var(--border-medium);
+            /* Menambahkan ini agar empty state mengambil space grid */
+            grid-column: 1 / -1;
         }
 
         .empty-icon {
@@ -283,32 +298,35 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        /* Responsive Design */
+        /* Responsive Design
+              Media query ini SUDAH BENAR dan tidak perlu diubah.
+            */
         @media (max-width: 768px) {
             .list-actions {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .action-btn {
                 justify-content: center;
             }
-            
+
             .list-meta {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .lists-container {
                 gap: 1rem;
             }
-            
+
             .list-card {
                 padding: 1.25rem;
             }
@@ -320,11 +338,11 @@
                 gap: 1rem;
                 align-items: flex-start;
             }
-            
+
             .header-actions {
                 width: 100%;
             }
-            
+
             .header-actions .btn {
                 width: 100%;
                 justify-content: center;

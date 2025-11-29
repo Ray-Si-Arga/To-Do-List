@@ -73,7 +73,7 @@
                         <i class="ph ph-text-aa"></i>
                         Deskripsi Tugas
                     </label>
-                    <textarea name="deskripsi" id="deskripsi" class="form-input" rows="3" required 
+                    <textarea name="deskripsi" id="deskripsi" class="form-input" rows="3.5" required 
                               placeholder="Masukkan deskripsi tugas...">{{ old('deskripsi') }}</textarea>
                 </div>
 
@@ -84,7 +84,7 @@
                             Tugaskan Kepada
                         </label>
                         <select name="assigned_user_id" id="assigned_user_id" class="form-input">
-                            <option value="">-- Pilih User --</option>
+                            <option value="">-- Pilih Nama --</option>
                             @foreach ($users as $user)
                                 <option value="{{ $user->id }}" {{ old('assigned_user_id') == $user->id ? 'selected' : '' }}>
                                     {{ $user->name }}
@@ -98,7 +98,7 @@
                             <i class="ph ph-calendar"></i>
                             Batas Waktu
                         </label>
-                        <input type="date" name="due_date" id="due_date" class="form-input" 
+                        <input type="datetime-local" name="due_date" id="due_date" class="form-input" 
                                value="{{ old('due_date') }}" required>
                     </div>
                 </div>
@@ -126,6 +126,10 @@
                     <i class="ph ph-check-circle"></i>
                     Selesai: {{ $tasks->where('is_completed', true)->count() }}
                 </span>
+                <span class="stat-item">
+                    <i class="ph ph-warning-circle"></i>
+                    Terlambat: {{ $tasks->where('is_overdue', true)->count() }}
+                </span>
             </div>
         </div>
 
@@ -140,11 +144,24 @@
         @else
             <div class="tasks-grid">
                 @foreach ($tasks as $task)
-                <div class="task-card {{ $task->is_completed ? 'completed' : '' }}">
+                <div class="task-card {{ $task->is_completed ? 'completed' : '' }} {{ $task->is_overdue ? 'overdue' : '' }}">
                     <div class="task-header">
                         <h3 class="task-title">{{ $task->deskripsi }}</h3>
-                        <div class="task-status {{ $task->is_completed ? 'status-completed' : 'status-pending' }}">
-                            {{ $task->is_completed ? 'Selesai' : 'Belum Selesai' }}
+                        <div class="task-status 
+                            @if($task->is_completed) 
+                                status-completed 
+                            @elseif($task->is_overdue)
+                                status-overdue
+                            @else
+                                status-pending 
+                            @endif">
+                            @if($task->is_completed)
+                                Selesai
+                            @elseif($task->is_overdue)
+                                Terlambat
+                            @else
+                                Belum Selesai
+                            @endif
                         </div>
                     </div>
 
@@ -155,7 +172,14 @@
                         </div>
                         <div class="meta-item">
                             <i class="ph ph-calendar"></i>
-                            <span>{{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d M Y') : 'Tidak ada' }}</span>
+                            <span>
+                                @if($task->due_date)
+                                    {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
+                                    ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
+                                @else
+                                    Tidak ada
+                                @endif
+                            </span>
                         </div>
                     </div>
 
@@ -240,7 +264,7 @@
         flex-shrink: 0;
     }
 
-    /* Button Styles - Fixed Warning Color */
+    /* Button Styles */
     .btn {
         display: inline-flex;
         align-items: center;
@@ -295,95 +319,105 @@
     }
 
     /* Form Improvements */
-    .form-container {
-        height: fit-content;
-        position: sticky;
-        top: 2rem;
-    }
+    /* Form Improvements - Diperbaiki */
+.form-container {
+    height: fit-content;
+    position: sticky;
+    top: 2rem;
+}
 
-    .form-card {
-        background: var(--bg-card);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-md);
-        padding: 2rem;
-        border: 1px solid var(--border-light);
-        height: fit-content;
-    }
+.form-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    border: 1px solid var(--border-light);
+    height: fit-content;
+    min-height: 580px; /* Diperpanjang dari sebelumnya */
+    display: flex;
+    flex-direction: column;
+}
 
-    .form-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
-    .form-icon {
-        font-size: 3rem;
-        color: var(--accent-primary);
-        margin-bottom: 1rem;
-    }
+.form-icon {
+    font-size: 3rem;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+}
 
-    .form-header h2 {
-        font-size: 1.5rem;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
+.form-header h2 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
 
-    .form-header p {
-        color: var(--text-muted);
-    }
+.form-header p {
+    color: var(--text-muted);
+}
 
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+@media (min-width: 640px) {
     .form-row {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: 1fr 1fr;
     }
+}
 
-    @media (min-width: 640px) {
-        .form-row {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+}
 
-    .form-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    box-sizing: border-box;
+}
 
-    .form-input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-medium);
-        border-radius: var(--radius-md);
-        background: var(--bg-input);
-        color: var(--text-primary);
-        font-size: 1rem;
-        transition: var(--transition);
-    }
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
 
-    .form-input:focus {
-        outline: none;
-        border-color: var(--accent-primary);
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
+.form-actions {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+}
 
-    .form-actions {
-        margin-top: 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--border-light);
-    }
-
-    .btn-lg {
-        padding: 0.75rem 1.5rem;
-        font-size: 1rem;
-        width: 100%;
-    }
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    width: 100%;
+}
 
     /* Tasks Container */
     .tasks-container {
@@ -455,12 +489,16 @@
         transition: var(--transition);
     }
 
-    .task-card:not(.completed)::before {
+    .task-card:not(.completed):not(.overdue)::before {
         background: linear-gradient(135deg, var(--accent-warning), #f59e0b);
     }
 
     .task-card.completed::before {
         background: linear-gradient(135deg, var(--accent-success), #10b981);
+    }
+
+    .task-card.overdue::before {
+        background: linear-gradient(135deg, var(--accent-danger), #ef4444);
     }
 
     .task-card:hover {
@@ -506,6 +544,11 @@
 
     .status-pending {
         background: var(--accent-warning);
+        color: white;
+    }
+
+    .status-overdue {
+        background: var(--accent-danger);
         color: white;
     }
 

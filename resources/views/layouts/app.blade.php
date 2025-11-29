@@ -18,28 +18,28 @@
             --bg-card: #ffffff;
             --bg-hover: #f1f5f9;
             --bg-input: #ffffff;
-            
+
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --text-muted: #94a3b8;
-            
+
             --accent-primary: #3b82f6;
             --accent-secondary: #6366f1;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-danger: #ef4444;
-            
+
             --border-light: #e2e8f0;
             --border-medium: #cbd5e1;
-            
+
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            
+
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
-            
+
             --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -52,26 +52,26 @@
             --bg-card: #1f2937;
             --bg-hover: #374151;
             --bg-input: #374151;
-            
+
             --text-primary: #f3f4f6;
             --text-secondary: #d1d5db;
             --text-muted: #9ca3af;
-            
+
             --accent-primary: #3b82f6;
             --accent-secondary: #60a5fa;
             --accent-success: #10b981;
             --accent-warning: #f59e0b;
             --accent-danger: #ef4444;
-            
+
             --border-light: #374151;
             --border-medium: #4b5563;
-            
+
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
         }
 
-        /* ===== BASE STYLES ===== */
+        /* ===== BASE STYLING ===== */
         * {
             margin: 0;
             padding: 0;
@@ -262,6 +262,10 @@
             gap: 0.5rem;
         }
 
+        .action-buttons>* {
+            width: 100%;
+        }
+
         .btn {
             padding: 0.75rem 1rem;
             border: none;
@@ -275,6 +279,7 @@
             justify-content: center;
             gap: 0.5rem;
             text-decoration: none;
+            width: 100%;
         }
 
         .btn-primary {
@@ -360,18 +365,18 @@
                 transform: translateX(-100%);
                 width: 280px;
             }
-            
+
             .sidebar.active {
                 transform: translateX(0);
             }
-            
+
             .main-content {
                 margin-left: 0;
                 width: 100%;
             }
-            
+
             .mobile-menu-btn {
-                display: block;
+                display: block !important;
                 position: fixed;
                 top: 1rem;
                 left: 1rem;
@@ -383,26 +388,30 @@
                 padding: 0.75rem;
                 cursor: pointer;
                 box-shadow: var(--shadow-lg);
+                font-size: 1.25rem;
+                line-height: 1;
             }
         }
 
         @media (max-width: 768px) {
             .main-content {
                 padding: 1rem;
+                padding-top: 5rem;
             }
-            
+
             .content-card {
                 padding: 1.5rem;
             }
-            
+
             .page-title {
                 font-size: 1.5rem;
             }
-            
+
             .content-header {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: flex-start;
+                margin-bottom: 1.5rem;
             }
         }
 
@@ -410,12 +419,12 @@
             .action-buttons {
                 width: 100%;
             }
-            
+
             .btn {
                 width: 100%;
                 justify-content: center;
             }
-            
+
             .sidebar {
                 width: 100%;
                 max-width: 300px;
@@ -444,6 +453,19 @@
         /* Mobile Menu Button */
         .mobile-menu-btn {
             display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            font-size: 1.25rem;
+            line-height: 1;
         }
 
         /* Overlay for mobile */
@@ -466,12 +488,10 @@
 </head>
 
 <body>
-    <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Buka menu">
         <i class="ph ph-list"></i>
     </button>
 
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="app-container">
@@ -479,7 +499,7 @@
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <i class="ph ph-check-square"></i>
-                <span>PKL Tasks</span>
+                <span>To-Do List</span>
             </div>
 
             @auth
@@ -487,7 +507,8 @@
                     <div class="nav-title">Navigation</div>
                     <ul class="nav-links">
                         <li>
-                            <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <a href="{{ route('dashboard') }}"
+                                class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                                 <i class="ph ph-house"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -495,14 +516,16 @@
                         {{-- Tampilkan "Kelola User" HANYA jika admin --}}
                         @if (Auth::user()->role == 'admin')
                             <li>
-                                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                                     <i class="ph ph-users"></i>
                                     <span>Kelola User</span>
                                 </a>
                             </li>
                         @endif
                         <li>
-                            <a href="{{ route('lists.index') }}" class="{{ request()->routeIs('lists.*') ? 'active' : '' }}">
+                            <a href="{{ route('lists.index') }}"
+                                class="{{ request()->routeIs('lists.*') ? 'active' : '' }}">
                                 <i class="ph ph-list-checks"></i>
                                 <span>Semua List</span>
                             </a>
@@ -522,12 +545,12 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button class="btn btn-outline" id="theme-toggle">
+                        <button class="btn btn-outline" id="theme-toggle" aria-label="Ganti mode tema">
                             <i class="ph" id="theme-icon"></i>
                             <span id="theme-text">Mode Gelap</span>
                         </button>
 
-                        <form class="logout-form" action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                        <form action="{{ route('logout') }}" method="POST" class="logout-form">
                             @csrf
                             <button type="submit" class="btn btn-danger">
                                 <i class="ph ph-sign-out"></i>
@@ -567,31 +590,33 @@
     </div>
 
     <script>
-        (function() {
-            // Theme Toggle Functionality
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = document.getElementById('theme-icon');
-            const themeText = document.getElementById('theme-text');
-            const body = document.body;
-            const currentTheme = localStorage.getItem('theme');
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const body = document.body;
+        const currentTheme = localStorage.getItem('theme');
 
-            // Initialize theme
-            function initTheme() {
-                if (currentTheme === 'dark') {
-                    body.classList.add('dark-mode');
-                    themeIcon.className = 'ph ph-sun';
-                    themeText.textContent = 'Mode Terang';
-                } else {
-                    body.classList.remove('dark-mode');
-                    themeIcon.className = 'ph ph-moon';
-                    themeText.textContent = 'Mode Gelap';
-                }
+        // Initialize theme
+        function initTheme() {
+            if (!themeToggle) return;
+
+            if (currentTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeIcon.className = 'ph ph-sun';
+                themeText.textContent = 'Mode Terang';
+            } else {
+                body.classList.remove('dark-mode');
+                themeIcon.className = 'ph ph-moon';
+                themeText.textContent = 'Mode Gelap';
             }
+        }
 
-            // Toggle theme
+        // Toggle theme
+        if (themeToggle) {
             themeToggle.addEventListener('click', function() {
                 body.classList.toggle('dark-mode');
-                
+
                 if (body.classList.contains('dark-mode')) {
                     localStorage.setItem('theme', 'dark');
                     themeIcon.className = 'ph ph-sun';
@@ -602,46 +627,56 @@
                     themeText.textContent = 'Mode Gelap';
                 }
             });
+        }
 
-            // Mobile Menu Functionality
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebarOverlay');
+        // Mobile Menu Functionality
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-            function toggleMobileMenu() {
-                sidebar.classList.toggle('active');
-                sidebarOverlay.classList.toggle('active');
-            }
+        function toggleMobileMenu() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+            
+            // Update aria label untuk aksesibilitas
+            const isOpen = sidebar.classList.contains('active');
+            mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+            mobileMenuBtn.innerHTML = isOpen ? '<i class="ph ph-x"></i>' : '<i class="ph ph-list"></i>';
+        }
 
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-                sidebarOverlay.addEventListener('click', toggleMobileMenu);
-            }
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+            sidebarOverlay.addEventListener('click', toggleMobileMenu);
+        }
 
-            // Initialize on load
-            document.addEventListener('DOMContentLoaded', function() {
-                initTheme();
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
 
-                // Auto-hide mobile menu when clicking on links
-                const navLinks = document.querySelectorAll('.nav-links a');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        if (window.innerWidth <= 1024) {
-                            toggleMobileMenu();
-                        }
-                    });
+            // Auto-hide mobile menu when clicking on links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 1024 && sidebar.classList.contains('active')) {
+                        toggleMobileMenu();
+                    }
                 });
             });
+        });
 
-            // Handle window resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 1024) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                }
-            });
-
-        })();
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                // Reset icon menu
+                mobileMenuBtn.innerHTML = '<i class="ph ph-list"></i>';
+                mobileMenuBtn.setAttribute('aria-label', 'Buka menu');
+            }
+        });
     </script>
+    
+    @yield('scripts')
 </body>
+
 </html>
