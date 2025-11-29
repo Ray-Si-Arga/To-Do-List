@@ -86,12 +86,6 @@
         /* List Container */
         .lists-container {
             display: grid;
-            /* PERBAIKAN:
-                  Ini akan secara otomatis membuat kolom grid yang responsif.
-                  - 'auto-fit': Buat kolom sebanyak mungkin.
-                  - 'minmax(320px, 1fr)': Setiap kolom memiliki lebar minimal 320px
-                    dan lebar maksimal 1 fraksi (membagi ruang yang tersisa).
-                */
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
             margin-top: 1.5rem;

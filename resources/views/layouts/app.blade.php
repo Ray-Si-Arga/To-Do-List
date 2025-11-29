@@ -576,10 +576,12 @@
         </aside>
 
         {{-- Konten Utama --}}
+        {{-- Konten Utama --}}
         <main class="main-content">
 
             <div class="content-wrapper" style="width: 100%; max-width: 1400px; margin-left: auto; margin-right: auto;">
 
+                {{-- Bagian Header Halaman (Judul, dll.) --}}
                 <div class="content-header">
                     <h1 class="page-title">@yield('title', 'Dashboard')</h1>
                     <div class="header-actions">
@@ -587,6 +589,7 @@
                     </div>
                 </div>
 
+                {{-- Bagian Kartu Konten Utama --}}
                 <div class="content-card">
                     @yield('content')
                 </div>

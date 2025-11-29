@@ -71,10 +71,9 @@
         </div>
 
         <br>
+        <br>
 
-
-        <div
-            style="display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 2.5rem; lg:grid-template-columns: repeat(3, minmax(0, 1fr));">
+        <div style="grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 2.5rem; lg:grid-template-columns: repeat(3, minmax(0, 1fr));">
 
             <div style="grid-column: span 2 / span 2; space-y: 3rem;">
 
@@ -108,8 +107,7 @@
 
                 <br>
 
-                <div
-                    style="background-color: var(--bg-card); border-radius: 1rem; box-shadow: var(--shadow-md); padding: 1.75rem; border: 1px solid var(--border-light);">
+                <div style="background-color: var(--bg-card); border-radius: 1rem; box-shadow: var(--shadow-md); padding: 1.75rem; border: 1px solid var(--border-light);">
                     <div
                         style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem;">
                         <h2 style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">Tugas Terbaru</h2>
@@ -170,8 +168,7 @@
                 </div>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 2.5rem;">
-
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-block: 1rem;">
                 <div style="background-color: var(--bg-card); border-radius: 1rem; box-shadow: var(--shadow-md); padding: 1.75rem; border: 1px solid var(--border-light);">
                     <h2 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: var(--text-primary);"> Progress</h2>
                     <div style="space-y: 1.5rem;">
@@ -525,7 +522,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Hapus event listener lama jika ada, atau tambahkan jika tidak ada
             // (Ini hanya untuk mencegah penambahan ganda jika script ini dimuat ulang)
-            const oldCalendarBtn = document.getElementById('openCalendarBtn');
+            // const oldCalendarBtn = document.getElementById('openCalendarBtn');
             if (oldCalendarBtn) {
                 oldCalendarBtn.remove(); // Hapus jika ada
             }
@@ -536,7 +533,6 @@
                 const calendarBtn = document.createElement('button');
                 calendarBtn.id = 'openCalendarBtn';
                 calendarBtn.className = 'btn btn-outline'; // Menggunakan style tombol dari app.blade.php
-                calendarBtn.innerHTML = '<i class="ph ph-calendar"></i> <span>Lihat Kalender</span>';
                 calendarBtn.onclick = showCalendar;
                 headerActions.appendChild(calendarBtn);
             }
