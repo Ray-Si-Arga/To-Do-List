@@ -2,10 +2,6 @@
 @section('title', 'Kelola User')
 
 @section('content')
-    {{-- 
-  Saya mengganti 'space-y-6' dengan 'gap: 1.5rem' agar lebih modern 
-  dan menghapus kebutuhan <style> di bawah.
---}}
     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
 
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -154,9 +150,4 @@
             </div>
         </div>
     </div>
-
-    {{-- 
-  BLOK <STYLE> ... </STYLE> YANG BESAR DI BAWAH INI TELAH DIHAPUS 
-  KARENA SUDAH TIDAK DIPERLUKAN LAGI.
---}}
 @endsection

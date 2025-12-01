@@ -126,7 +126,6 @@
     }
 
     .form-row {
-        display: grid;
         grid-template-columns: 1fr;
         gap: 1rem;
         align-items: start;
@@ -557,7 +556,7 @@
                                 <i class="ph ph-calendar"></i>
                                 Batas Waktu
                             </label>
-                            <input type="datetime-local" name="due_date" id="due_date" class="form-input"
+                            <input type="date" name="due_date" id="due_date" class="form-input"
                                 value="{{ old('due_date') }}" required>
                         </div>
                     </div>
@@ -626,14 +625,14 @@
 
                             <div class="task-meta">
                                 <div class="meta-item">
-                                    <i class="ph ph-user"></i>
+                                    <i class="ph ph-user"></i>Kepada :
                                     <span>{{ $task->assigned_user_name ?? 'Tidak ditugaskan' }}</span>
                                 </div>
                                 <div class="meta-item">
-                                    <i class="ph ph-calendar"></i>
+                                    <i class="ph ph-calendar"></i>Tenggat : 
                                     <span>
                                         @if ($task->due_date)
-                                            {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
+                                            {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                                             ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
                                         @else
                                             Tidak ada

@@ -68,7 +68,7 @@
                         <i class="ph ph-calendar"></i>
                         <div>
                             <strong>Dibuat pada:</strong>
-                            <span>{{ $list->created_at->format('d M Y H:i') }}</span>
+                            <span>{{ $list->created_at->format('d M Y') }}</span>
                         </div>
                     </div>
                     <div class="info-item">

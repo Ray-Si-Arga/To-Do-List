@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Semua List Tugas')
+@section('title', 'List')
 
 <style>
     /* List Container */
@@ -20,7 +20,6 @@
         transition: var(--transition);
         position: relative;
         overflow: hidden;
-        /* Menambahkan ini agar tinggi card konsisten di baris yang sama */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -84,7 +83,6 @@
         gap: 0.75rem;
         flex-wrap: wrap;
         align-items: center;
-        /* Memastikan tombol selalu di bawah */
         margin-top: 1rem;
     }
 
@@ -119,7 +117,7 @@
     }
 
     .action-btn.btn-warning:hover {
-        background: #eab308;
+        background: var(--accent-warning-hover, #eab308);
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
@@ -130,7 +128,8 @@
     }
 
     .action-btn.btn-danger:hover {
-        background: #dc2626;
+        background: var(--accent-danger-hover, #dc2626);
+        /* Fallback */
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
     }
@@ -147,7 +146,6 @@
         background: var(--bg-card);
         border-radius: var(--radius-lg);
         border: 2px dashed var(--border-medium);
-        /* Menambahkan ini agar empty state mengambil space grid */
         grid-column: 1 / -1;
     }
 
@@ -179,27 +177,23 @@
         border-left: 4px solid transparent;
     }
 
+    /* FIX 2: Menggunakan variabel CSS untuk alert */
     .alert-success {
-        background: #d1fae5;
-        color: #065f46;
-        border-left-color: #10b981;
+        background: var(--bg-alert-success, #d1fae5);
+        color: var(--text-alert-success, #065f46);
+        border-left-color: var(--border-alert-success, #10b981);
     }
 
-    .dark-mode .alert-success {
-        background: rgba(16, 185, 129, 0.1);
-        color: #a7f3d0;
-    }
+    /* FIX 2: Menghapus rule .dark-mode .alert-success */
 
+    /* FIX 2: Menggunakan variabel CSS untuk alert */
     .alert-error {
-        background: #fee2e2;
-        color: #991b1b;
-        border-left-color: #ef4444;
+        background: var(--bg-alert-danger, #fee2e2);
+        color: var(--text-alert-danger, #991b1b);
+        border-left-color: var(--border-alert-danger, #ef4444);
     }
 
-    .dark-mode .alert-error {
-        background: rgba(239, 68, 68, 0.1);
-        color: #fecaca;
-    }
+    /* FIX 2: Menghapus rule .dark-mode .alert-error */
 
     /* Animations */
     .animate-fade-in {
@@ -218,13 +212,15 @@
         }
     }
 
-    /* Responsive Design
-          Media query ini SUDAH BENAR dan tidak perlu diubah.
-        */
     @media (max-width: 768px) {
         .list-actions {
             flex-direction: column;
             align-items: stretch;
+        }
+
+        .list-actions .delete-form,
+        .list-actions .delete-form .action-btn {
+            width: 100%;
         }
 
         .action-btn {
@@ -259,6 +255,10 @@
         .header-actions .btn {
             width: 100%;
             justify-content: center;
+        }
+
+        .lists-container {
+            grid-template-columns: 1fr;
         }
     }
 </style>

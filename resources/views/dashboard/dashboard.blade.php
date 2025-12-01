@@ -1,14 +1,5 @@
 @extends('layouts.app')
 @section('title', 'Dashboard')
-{{-- 
-    CATATAN: Penggunaan script @tailwindcss/browser@4 ini tidak biasa untuk produksi
-    dan merupakan alasan mengapa Anda harus menggunakan style inline.
-    Idealnya, Anda akan menggunakan kelas Tailwind (misal: class="bg-white dark:bg-gray-800")
-    dan menghapus script ini.
-    
-    Namun, solusi di bawah ini akan bekerja dengan pengaturan Anda saat ini
-    dengan mengganti warna statis dengan variabel CSS dari app.blade.php.
---}}
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
 @section('content')
@@ -133,7 +124,7 @@
                                         <p style="font-size: 0.875rem; color: var(--text-secondary);">
                                             {{ $task->list->title ?? 'Tanpa list' }} •
                                             @if ($task->due_date)
-                                                {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
+                                                {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                                                 ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
                                             @else
                                                 Tanpa tenggat
@@ -241,7 +232,7 @@
                                             {{ $task->deskripsi ?? 'Tanpa deskripsi' }}</p>
                                         <p style="font-size: 0.875rem; color: var(--text-secondary);">
                                             @if ($task->due_date)
-                                                {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
+                                                {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                                                 ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
                                             @else
                                                 Tanpa tenggat
@@ -520,19 +511,12 @@
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Hapus event listener lama jika ada, atau tambahkan jika tidak ada
-            // (Ini hanya untuk mencegah penambahan ganda jika script ini dimuat ulang)
-            // const oldCalendarBtn = document.getElementById('openCalendarBtn');
-            if (oldCalendarBtn) {
-                oldCalendarBtn.remove(); // Hapus jika ada
-            }
+       
 
             // Tambahkan tombol untuk membuka kalender di header
             const headerActions = document.querySelector('.header-actions');
             if (headerActions) {
                 const calendarBtn = document.createElement('button');
-                calendarBtn.id = 'openCalendarBtn';
-                calendarBtn.className = 'btn btn-outline'; // Menggunakan style tombol dari app.blade.php
                 calendarBtn.onclick = showCalendar;
                 headerActions.appendChild(calendarBtn);
             }
