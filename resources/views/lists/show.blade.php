@@ -2,221 +2,6 @@
 
 @section('title', 'Detail List: ' . $list->title)
 
-@section('content')
-<div class="content-header">
-    <div class="header-content">
-        <div class="header-text">
-            <h1 class="page-title">{{ $list->title }}</h1>
-            <div class="header-meta">
-                <span class="meta-item">
-                    <i class="ph ph-user"></i>
-                    Dibuat oleh: {{ $list->user->name ?? 'Sistem' }}
-                </span>
-                <span class="meta-item">
-                    <i class="ph ph-calendar"></i>
-                    Dibuat: {{ $list->created_at->diffForHumans() }}
-                </span>
-            </div>
-        </div>
-        <div class="header-actions">
-            <a href="{{ route('lists.edit', $list->id) }}" class="btn btn-warning">
-                <i class="ph ph-pencil"></i>
-                Edit List
-            </a>
-            <a href="{{ route('lists.index') }}" class="btn btn-outline">
-                <i class="ph ph-arrow-left"></i>
-                Kembali
-            </a>
-        </div>
-    </div>
-</div>
-
-@if (session('success'))
-    <div class="alert alert-success animate-fade-in">
-        <i class="ph ph-check-circle"></i>
-        {{ session('success') }}
-    </div>
-@endif
-
-<div class="dashboard-grid">
-    <!-- Left Column - Add Task Form -->
-    <div class="form-container animate-fade-in">
-        <div class="form-card">
-            <div class="form-header">
-                <div class="form-icon">
-                    <i class="ph ph-plus-circle"></i>
-                </div>
-                <h2>Tambah Tugas Baru</h2>
-                <p>Tambahkan tugas baru ke dalam list {{ $list->title }}</p>
-            </div>
-
-            @if ($errors->any())
-                <div class="alert alert-error">
-                    <i class="ph ph-warning-circle"></i>
-                    <div>
-                        <strong>Error!</strong>
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @endif
-
-            <form action="{{ route('tasks.store') }}" method="POST" class="form">
-                @csrf
-                <input type="hidden" name="lists_id" value="{{ $list->id }}">
-
-                <div class="form-group">
-                    <label for="deskripsi" class="form-label">
-                        <i class="ph ph-text-aa"></i>
-                        Deskripsi Tugas
-                    </label>
-                    <textarea name="deskripsi" id="deskripsi" class="form-input" rows="3.5" required 
-                              placeholder="Masukkan deskripsi tugas...">{{ old('deskripsi') }}</textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="assigned_user_id" class="form-label">
-                            <i class="ph ph-user"></i>
-                            Tugaskan Kepada
-                        </label>
-                        <select name="assigned_user_id" id="assigned_user_id" class="form-input">
-                            <option value="">-- Pilih Nama --</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->id }}" {{ old('assigned_user_id') == $user->id ? 'selected' : '' }}>
-                                    {{ $user->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="due_date" class="form-label">
-                            <i class="ph ph-calendar"></i>
-                            Batas Waktu
-                        </label>
-                        <input type="datetime-local" name="due_date" id="due_date" class="form-input" 
-                               value="{{ old('due_date') }}" required>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="ph ph-plus"></i>
-                        Tambah Tugas
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Right Column - Tasks List -->
-    <div class="tasks-container animate-fade-in" style="animation-delay: 0.1s">
-        <div class="tasks-header">
-            <h2 class="section-title">Daftar Tugas</h2>
-            <div class="tasks-stats">
-                <span class="stat-item">
-                    <i class="ph ph-list-checks"></i>
-                    Total: {{ $tasks->count() }}
-                </span>
-                <span class="stat-item">
-                    <i class="ph ph-check-circle"></i>
-                    Selesai: {{ $tasks->where('is_completed', true)->count() }}
-                </span>
-                <span class="stat-item">
-                    <i class="ph ph-warning-circle"></i>
-                    Terlambat: {{ $tasks->where('is_overdue', true)->count() }}
-                </span>
-            </div>
-        </div>
-
-        @if ($tasks->isEmpty())
-            <div class="empty-state">
-                <div class="empty-icon">
-                    <i class="ph ph-clipboard-text"></i>
-                </div>
-                <h3>Belum Ada Tugas</h3>
-                <p>Mulai dengan menambahkan tugas pertama Anda</p>
-            </div>
-        @else
-            <div class="tasks-grid">
-                @foreach ($tasks as $task)
-                <div class="task-card {{ $task->is_completed ? 'completed' : '' }} {{ $task->is_overdue ? 'overdue' : '' }}">
-                    <div class="task-header">
-                        <h3 class="task-title">{{ $task->deskripsi }}</h3>
-                        <div class="task-status 
-                            @if($task->is_completed) 
-                                status-completed 
-                            @elseif($task->is_overdue)
-                                status-overdue
-                            @else
-                                status-pending 
-                            @endif">
-                            @if($task->is_completed)
-                                Selesai
-                            @elseif($task->is_overdue)
-                                Terlambat
-                            @else
-                                Belum Selesai
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="task-meta">
-                        <div class="meta-item">
-                            <i class="ph ph-user"></i>
-                            <span>{{ $task->assigned_user_name ?? 'Tidak ditugaskan' }}</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="ph ph-calendar"></i>
-                            <span>
-                                @if($task->due_date)
-                                    {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
-                                    ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
-                                @else
-                                    Tidak ada
-                                @endif
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="task-actions">
-                        <form action="{{ route('tasks.toggle', $task->id) }}" method="POST" class="task-action-form">
-                            @csrf
-                            @method('PATCH')
-                            @if ($task->is_completed)
-                                <button type="submit" class="btn btn-outline">
-                                    <i class="ph ph-arrow-counter-clockwise"></i>
-                                    Batal Selesai
-                                </button>
-                            @else
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="ph ph-check"></i>
-                                    Tandai Selesai
-                                </button>
-                            @endif
-                        </form>
-                        
-                        <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" class="task-action-form">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger" 
-                                    onclick="return confirm('Anda yakin ingin menghapus tugas ini?')">
-                                <i class="ph ph-trash"></i>
-                                Hapus
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                @endforeach
-            </div>
-        @endif
-    </div>
-</div>
-
 <style>
     .dashboard-grid {
         display: grid;
@@ -225,9 +10,20 @@
         margin-top: 1.5rem;
     }
 
+    /* FIX: Sticky position HANYA akan aktif di desktop */
     @media (min-width: 1024px) {
         .dashboard-grid {
             grid-template-columns: 400px 1fr;
+        }
+
+        .form-container {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .form-card {
+            min-height: 580px;
+            /* Tinggi minimal hanya di desktop */
         }
     }
 
@@ -264,49 +60,18 @@
         flex-shrink: 0;
     }
 
-    /* Button Styles */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: var(--radius-md);
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: var(--transition);
-        border: none;
-        cursor: pointer;
-    }
-
+    /* Button Styles (Sudah ada di app.blade.php, tapi kita perlu override hover) */
     .btn-warning {
         background: var(--accent-warning);
         color: white;
     }
 
+    /* FIX: Menggunakan variabel hover */
     .btn-warning:hover {
-        background: #eab308;
+        background: var(--accent-warning-hover, #eab308);
+        /* Fallback jika var tidak ada */
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
-    }
-
-    .btn-outline {
-        background: transparent;
-        color: var(--text-primary);
-        border: 1px solid var(--border-medium);
-    }
-
-    .btn-outline:hover {
-        background: var(--bg-input);
-    }
-
-    .btn-primary {
-        background: var(--accent-primary);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--accent-secondary);
     }
 
     .btn-danger {
@@ -314,110 +79,111 @@
         color: white;
     }
 
+    /* FIX: Menggunakan variabel hover */
     .btn-danger:hover {
-        background: #dc2626;
+        background: var(--accent-danger-hover, #dc2626);
+        /* Fallback jika var tidak ada */
     }
 
     /* Form Improvements */
-    /* Form Improvements - Diperbaiki */
-.form-container {
-    height: fit-content;
-    position: sticky;
-    top: 2rem;
-}
-
-.form-card {
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    padding: 2rem;
-    border: 1px solid var(--border-light);
-    height: fit-content;
-    min-height: 580px; /* Diperpanjang dari sebelumnya */
-    display: flex;
-    flex-direction: column;
-}
-
-.form-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.form-icon {
-    font-size: 3rem;
-    color: var(--accent-primary);
-    margin-bottom: 1rem;
-}
-
-.form-header h2 {
-    font-size: 1.5rem;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.form-header p {
-    color: var(--text-muted);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    align-items: start;
-}
-
-@media (min-width: 640px) {
-    .form-row {
-        grid-template-columns: 1fr 1fr;
+    .form-container {
+        height: fit-content;
+        /* position: sticky; dan top: 2rem; DIPINDAHKAN ke media query */
     }
-}
 
-.form-group {
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
+    .form-card {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: 2rem;
+        border: 1px solid var(--border-light);
+        height: fit-content;
+        min-height: auto;
+        /* FIX: Tinggi auto di mobile */
+        display: flex;
+        flex-direction: column;
+    }
 
-.form-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-    flex-shrink: 0;
-}
+    .form-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
 
-.form-input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-medium);
-    border-radius: var(--radius-md);
-    background: var(--bg-input);
-    color: var(--text-primary);
-    font-size: 1rem;
-    transition: var(--transition);
-    box-sizing: border-box;
-}
+    .form-icon {
+        font-size: 3rem;
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
 
-.form-input:focus {
-    outline: none;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+    .form-header h2 {
+        font-size: 1.5rem;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
 
-.form-actions {
-    margin-top: auto;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border-light);
-}
+    .form-header p {
+        color: var(--text-muted);
+    }
 
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    width: 100%;
-}
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        align-items: start;
+    }
+
+    @media (min-width: 640px) {
+        .form-row {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-md);
+        background: var(--bg-input);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: var(--transition);
+        box-sizing: border-box;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-actions {
+        margin-top: auto;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        width: 100%;
+    }
 
     /* Tasks Container */
     .tasks-container {
@@ -529,7 +295,8 @@
 
     .task-status {
         padding: 0.375rem 0.75rem;
-        border-radius: var(--radius-full);
+        border-radius: 9999px;
+        /* --radius-full */
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -557,14 +324,6 @@
         flex-direction: column;
         gap: 0.75rem;
         margin-bottom: 1.5rem;
-    }
-
-    .meta-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: var(--text-muted);
     }
 
     .task-actions {
@@ -606,6 +365,37 @@
     .empty-state p {
         color: var(--text-muted);
         margin-bottom: 1.5rem;
+    }
+
+    /* FIX: Menambahkan style Alert (notifikasi) yang hilang
+      (Ini digunakan untuk error validasi form)
+    */
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: var(--radius-md);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        /* Ubah ke flex-start agar ikon sejajar dengan baris pertama teks */
+        gap: 0.75rem;
+        border-left: 4px solid transparent;
+    }
+
+    .alert-success {
+        background: var(--bg-alert-success, #d1fae5);
+        color: var(--text-alert-success, #065f46);
+        border-left-color: var(--border-alert-success, #10b981);
+    }
+
+    .alert-error {
+        background: var(--bg-alert-danger, #fee2e2);
+        color: var(--text-alert-danger, #991b1b);
+        border-left-color: var(--border-alert-danger, #ef4444);
+    }
+
+    .alert ul {
+        list-style-position: inside;
+        padding-left: 0.5rem;
     }
 
     /* Responsive Design */
@@ -662,11 +452,229 @@
         .form-row {
             grid-template-columns: 1fr;
         }
-        
+
         .header-meta {
             flex-direction: column;
             gap: 0.5rem;
         }
     }
 </style>
+
+@section('content')
+    <div class="content-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="page-title">{{ $list->title }}</h1>
+                <div class="header-meta">
+                    <span class="meta-item">
+                        <i class="ph ph-user"></i>
+                        Dibuat oleh: {{ $list->user->name ?? 'Sistem' }}
+                    </span>
+                    <span class="meta-item">
+                        <i class="ph ph-calendar"></i>
+                        Dibuat: {{ $list->created_at->diffForHumans() }}
+                    </span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="{{ route('lists.edit', $list->id) }}" class="btn btn-warning">
+                    <i class="ph ph-pencil"></i>
+                    Edit List
+                </a>
+                <a href="{{ route('lists.index') }}" class="btn btn-outline">
+                    <i class="ph ph-arrow-left"></i>
+                    Kembali
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @if (session('success'))
+        <div class="alert alert-success animate-fade-in">
+            <i class="ph ph-check-circle"></i>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <div class="dashboard-grid">
+        <!-- Left Column - Add Task Form -->
+        <div class="form-container animate-fade-in">
+            <div class="form-card">
+                <div class="form-header">
+                    <div class="form-icon">
+                        <i class="ph ph-plus-circle"></i>
+                    </div>
+                    <h2>Tambah Tugas Baru</h2>
+                    <p>Tambahkan tugas baru ke dalam list {{ $list->title }}</p>
+                </div>
+
+                @if ($errors->any())
+                    <div class="alert alert-error">
+                        <i class="ph ph-warning-circle"></i>
+                        <div>
+                            <strong>Error!</strong>
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+
+                <form action="{{ route('tasks.store') }}" method="POST" class="form">
+                    @csrf
+                    <input type="hidden" name="lists_id" value="{{ $list->id }}">
+
+                    <div class="form-group">
+                        <label for="deskripsi" class="form-label">
+                            <i class="ph ph-text-aa"></i>
+                            Deskripsi Tugas
+                        </label>
+                        <textarea name="deskripsi" id="deskripsi" class="form-input" rows="3.5" required
+                            placeholder="Masukkan deskripsi tugas...">{{ old('deskripsi') }}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="assigned_user_id" class="form-label">
+                                <i class="ph ph-user"></i>
+                                Tugaskan Kepada
+                            </label>
+                            <select name="assigned_user_id" id="assigned_user_id" class="form-input">
+                                <option value="">-- Pilih Nama --</option>
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}"
+                                        {{ old('assigned_user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="due_date" class="form-label">
+                                <i class="ph ph-calendar"></i>
+                                Batas Waktu
+                            </label>
+                            <input type="datetime-local" name="due_date" id="due_date" class="form-input"
+                                value="{{ old('due_date') }}" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="ph ph-plus"></i>
+                            Tambah Tugas
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column - Tasks List -->
+        <div class="tasks-container animate-fade-in" style="animation-delay: 0.1s">
+            <div class="tasks-header">
+                <h2 class="section-title">Daftar Tugas</h2>
+                <div class="tasks-stats">
+                    <span class="stat-item">
+                        <i class="ph ph-list-checks"></i>
+                        Total: {{ $tasks->count() }}
+                    </span>
+                    <span class="stat-item">
+                        <i class="ph ph-check-circle"></i>
+                        Selesai: {{ $tasks->where('is_completed', true)->count() }}
+                    </span>
+                    <span class="stat-item">
+                        <i class="ph ph-warning-circle"></i>
+                        Terlambat: {{ $tasks->where('is_overdue', true)->count() }}
+                    </span>
+                </div>
+            </div>
+
+            @if ($tasks->isEmpty())
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="ph ph-clipboard-text"></i>
+                    </div>
+                    <h3>Belum Ada Tugas</h3>
+                    <p>Mulai dengan menambahkan tugas pertama Anda</p>
+                </div>
+            @else
+                <div class="tasks-grid">
+                    @foreach ($tasks as $task)
+                        <div
+                            class="task-card {{ $task->is_completed ? 'completed' : '' }} {{ $task->is_overdue ? 'overdue' : '' }}">
+                            <div class="task-header">
+                                <h3 class="task-title">{{ $task->deskripsi }}</h3>
+                                <div
+                                    class="task-status 
+                            @if ($task->is_completed) status-completed 
+                            @elseif($task->is_overdue)
+                                status-overdue
+                            @else
+                                status-pending @endif">
+                                    @if ($task->is_completed)
+                                        Selesai
+                                    @elseif($task->is_overdue)
+                                        Terlambat
+                                    @else
+                                        Belum Selesai
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="task-meta">
+                                <div class="meta-item">
+                                    <i class="ph ph-user"></i>
+                                    <span>{{ $task->assigned_user_name ?? 'Tidak ditugaskan' }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="ph ph-calendar"></i>
+                                    <span>
+                                        @if ($task->due_date)
+                                            {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y H:i') }}
+                                            ({{ \Carbon\Carbon::parse($task->due_date)->diffForHumans() }})
+                                        @else
+                                            Tidak ada
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="task-actions">
+                                <form action="{{ route('tasks.toggle', $task->id) }}" method="POST"
+                                    class="task-action-form">
+                                    @csrf
+                                    @method('PATCH')
+                                    @if ($task->is_completed)
+                                        <button type="submit" class="btn btn-outline">
+                                            <i class="ph ph-arrow-counter-clockwise"></i>
+                                            Batal Selesai
+                                        </button>
+                                    @else
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="ph ph-check"></i>
+                                            Tandai Selesai
+                                        </button>
+                                    @endif
+                                </form>
+
+                                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
+                                    class="task-action-form">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger"
+                                        onclick="return confirm('Anda yakin ingin menghapus tugas ini?')">
+                                        <i class="ph ph-trash"></i>
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </div>
 @endsection
